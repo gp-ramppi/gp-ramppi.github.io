@@ -29,6 +29,18 @@
   <script src="./static/js/bulma-carousel.min.js"></script>
   <script src="./static/js/bulma-slider.min.js"></script>
   <script src="./static/js/index.js"></script>
+
+  <!-- MathJax for LaTeX rendering -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['$$', '$$']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 
 <body>
@@ -87,10 +99,10 @@
         <!-- Left column: Gazebo simulation -->
         <div class="column has-text-centered">
           <video autoplay muted loop playsinline width="100%">
-            <source src="./static/videos/proposed diff.mp4" type="video/mp4">
+            <source src="./static/videos/proposed diff.webm" type="video/webm">
             Your browser does not support the video tag.
           </video>
-          <h2 class="subtitle mt-2">
+          <h2 class=" subtitle mt-2">
             Proposed method run in Gazebo simulation
           </h2>
         </div>
@@ -98,7 +110,7 @@
         <!-- Right column: Real-world -->
         <div class="column has-text-centered">
           <video autoplay muted loop playsinline width="100%">
-            <source src="./static/videos/W-obs-proposed smooth.mp4" type="video/mp4">
+            <source src="./static/videos/W-obs-proposed smooth.webm" type="video/webm">
             Your browser does not support the video tag.
           </video>
           <h2 class="subtitle mt-2">
@@ -127,27 +139,31 @@
               variance of the uncertainty. Online, the gap between the nominal and real dynamics is compensated by the
               trained GP. In other words, the nominal model is refined using the estimated noise mean, while the
               estimated noise variance is directly incorporated into the RA‑MPPI framework, eliminating the need to
-              manually tune control disturbance covariance parameters. Validation is conducted through simulation
-              experiments in Gazebo using an F1TENTH car with a bicycle model navigating a track with and without
-              obstacles. Also, real‑world performance is further demonstrated on the F1TENTH platform driving the same
-              track under similar conditions. Across both simulation and real‑world scenarios, the proposed method
-              demonstrates improved safety and trajectory tracking performance compared to baseline MPPI and RA‑MPPI
-              techniques in terms of lap times and the number of collision‑free lap completions.
+              manually tune the disturbance covariance parameter. Validation is conducted through simulation experiments
+              in Gazebo using a F1TENTH car with a bicycle model navigating a track with and without obstacles. Also,
+              real‑world performance is further demonstrated on the F1TENTH car platform driving the same track under
+              similar conditions. Across both simulation and real‑world scenarios, the proposed method demonstrates
+              improved safety and trajectory tracking performance compared to baseline MPPI and RA‑MPPI techniques in
+              terms of lap times and the number of crash‑free lap completions. Videos of the F1TENTH car simulations,
+              experiments, and similar Gazebo simulation results using a Clearpath Jackal with a differential drive
+              model are available at the project webpage:
+              <a href="https://gp-ramppi.github.io" target="_blank">https://gp-ramppi.github.io</a>.
             </p>
           </div>
         </div>
       </div>
       <!--/ Abstract. -->
 
-      <div class="columns is-centered has-text-centered mt-6 mb-6">
+      <div class="columns is-centered has-text-centered mb-6">
         <div class="column is-four-fifths">
-          <h2 class="title is-3">The proposed Risk-Aware MPPI with Gaussian
-            Process framework</h2>
           <div class="content has-text-justified">
             <figure class="image">
               <img src="./static/images/ramppi_with_gp_framework2.png"
                 alt="Framework diagram of GP-RAMPPI showing integration of Gaussian Process model into the RA-MPPI controller."
                 loading="lazy">
+              <figcaption class="has-text-centered mt-2" style="font-style: normal;">
+                FIGURE 1: The proposed Risk-Aware MPPI with Gaussian Process framework for mobile robot
+              </figcaption>
             </figure>
           </div>
         </div>
@@ -155,32 +171,47 @@
 
 
       <!-- Paper video. -->
-      <div class="columns is-centered has-text-centered mt-6 mb-6">
+      <div class="columns is-centered has-text-centered mt-6">
         <div class="column is-four-fifths">
           <h2 class="title is-3">F1TENTH Gazebo Simulation Evaluation</h2>
           <div class="publication-video">
-            <iframe src="https://www.youtube.com/embed/M_l3x99fKtk?rel=0&amp;showinfo=0" frameborder="0"
+            <iframe src="https://www.youtube.com/embed/wznnwawFi6k?rel=0&amp;showinfo=0" frameborder="0"
               allow="autoplay; encrypted-media" allowfullscreen></iframe>
           </div>
+
         </div>
       </div>
-      <!--/ Paper video. -->
 
-
-      <!-- Paper video. -->
-      <div class="columns is-centered has-text-centered mb-6 mt-6">
+      <div class="columns is-centered has-text-centered mb-6 ">
         <div class="column is-four-fifths">
-          <h2 class="title is-3">F1TENTH Real-World Evaluation</h2>
+          <p>
+            Model, parameters, and result's table can be seen in the paper.
+          </p>
+        </div>
+      </div>
+
+      <!-- Paper video. -->
+      <div class="columns is-centered has-text-centered mt-6">
+        <div class="column is-four-fifths">
+          <h3 class="title is-3">F1TENTH Real-World Evaluation</h3>
           <div class="publication-video">
-            <iframe src="https://www.youtube.com/embed/I3XB-tGS3Lg?rel=0&amp;showinfo=0" frameborder="0"
+            <iframe src="https://www.youtube.com/embed/S-0TqapzAsU?rel=0&amp;showinfo=0" frameborder="0"
               allow="autoplay; encrypted-media" allowfullscreen></iframe>
           </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered mb-6 ">
+        <div class="column is-four-fifths">
+          <p>
+            Model, parameters, and result's table can be seen in the paper.
+          </p>
         </div>
       </div>
       <!--/ Paper video. -->
 
       <!-- Paper video. -->
-      <div class="columns is-centered has-text-centered mb-6 mt-6">
+      <div class="columns is-centered has-text-centered mt-6">
         <div class="column is-four-fifths">
           <h2 class="title is-3">Clearpath Jackal Gazebo Simulation Evaluation</h2>
           <div class="publication-video">
@@ -191,20 +222,88 @@
       </div>
       <!--/ Paper video. -->
 
-      <div class="columns is-centered has-text-centered mt-6">
+      <div class="columns is-centered has-text-centered">
         <div class="column is-four-fifths">
-          <h2 class="title is-3">Clearpath Jackal Gazebo Simulation Evaluation Result</h2>
-          <div class="content has-text-justified">
+          <h3 class="title is-4 title-tight">Model</h3>
+          <div class="content list-middle-wrap content-tight">
+            <ul class="list-middle">
+              <li>
+                The robot is modeled as a differential drive with state
+                \( x = (p_x, p_y, \theta) \) (position and heading).
+              </li>
+              <li>
+                The control inputs are \( u = (v, \omega) \), where
+                \(v\) is linear velocity and \(\omega\) is angular velocity.
+              </li>
+              <li>
+                With sampling time \(T_s\), the discrete-time kinematics are:
+                $$\begin{aligned}
+                p_{x,k+1} &= p_{x,k} + T_s\, v_k \cos\theta_k,\\
+                p_{y,k+1} &= p_{y,k} + T_s\, v_k \sin\theta_k,\\
+                \theta_{k+1} &= \theta_k + T_s\, \omega_k.
+                \end{aligned}$$
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paper video. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h3 class="title is-4 title-tight">Parameters</h3>
+          <div class="content list-middle-wrap content-tight">
+            <ul class="list-middle">
+              <li><strong>Sampling rate:</strong> 50.0 Hz (T<sub>s</sub> = 0.02 s)</li>
+              <li><strong>Time horizon:</strong> 3 s (Prediction horizon K = 150 steps)</li>
+              <li><strong>Number of trajectories:</strong> M = 256</li>
+              <li><strong>Exploration variance:</strong> γ = 1200.0</li>
+              <li><strong>Control covariance:</strong> Σ<sub>v</sub> = diag(0.5², 1.0²)</li>
+              <li><strong>Inverse temperature:</strong> λ = 0.01</li>
+              <li><strong>State weights:</strong> W = diag(1, 1, 0)</li>
+              <li><strong>Control weights:</strong> R = λ Σ<sub>v</sub><sup>−1/2</sup></li>
+              <li><strong>Collision cost:</strong> C<sub>col</sub> = 10⁷</li>
+              <li><strong>Max velocity:</strong> 3.5 m/s</li>
+              <li><strong>Max angular velocity:</strong> 1.5 rad/s</li>
+              <li><strong>RA-MPPI number of aware trajectories:</strong> N = 16</li>
+              <li><strong>RA-MPPI weight parameters:</strong> A = 0.1, B = 0.9</li>
+            </ul>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h3 class="title is-4 title-tight">Result</h3>
+          <div class="content has-text-justified content-tight">
             <figure class="image">
-              <img src="./static/images/jackal result 2.png" loading="lazy">
+              <figcaption class="has-text-centered" style="font-style: normal;">
+                TABLE 1: Number of Laps Completed in Each Trial and Total Laps per Method. Each sub-table corresponds to
+                one of the two scenarios:
+                (a) Jackal without obstacles,
+                (b) Jackal with obstacles.
+                Here, <em>T<sub>i</sub></em> denotes trial <em>i</em>.
+                The “Total” column shows the sum of laps completed over all 10 trials.
+              </figcaption>
+              <img src="./static/images/jackal result 1.png" loading="lazy">
             </figure>
             <figure class="image">
-              <img src="./static/images/jackal result 1.png" loading="lazy">
+              <figcaption class="has-text-centered" style="font-style: normal;">
+                TABLE 2: Average Lap Time (Over Completed Laps) and Average Computation Time per Control Step. Average
+                lap time is in seconds (s); Computation time is in milliseconds (ms).
+                Note that for methods with zero completed laps, the lap-time is not defined.
+              </figcaption>
+              <img src="./static/images/jackal result 2.png" loading="lazy">
             </figure>
           </div>
         </div>
       </div>
+
+
     </div>
+
+
 
 
 
