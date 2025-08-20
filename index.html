@@ -154,8 +154,9 @@
       </div>
       <!--/ Abstract. -->
 
-      <div class="columns is-centered has-text-centered mb-6">
+      <div class="columns is-centered has-text-centered mt-6">
         <div class="column is-four-fifths">
+          <h2 class="title is-3">The proposed method (summarized)</h2>
           <div class="content has-text-justified">
             <figure class="image">
               <img src="./static/images/ramppi_with_gp_framework2.png"
@@ -170,30 +171,176 @@
       </div>
 
 
-      <!-- Paper video. -->
-      <div class="columns is-centered has-text-centered mt-6">
+      <div class="columns is-centered has-text-centered">
         <div class="column is-four-fifths">
-          <h2 class="title is-3">F1TENTH Gazebo Simulation Evaluation</h2>
-          <div class="publication-video">
-            <iframe src="https://www.youtube.com/embed/wznnwawFi6k?rel=0&amp;showinfo=0" frameborder="0"
-              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          <h3 class="title is-4">Offline</h3>
+          <div class="content has-text-justified">
+            <ol>
+              <li>
+                <strong>Collect data in open space.</strong>
+                Drive the robot in open space manually or with a simple controller (e.g., baseline MPPI) at
+                speeds/trajectories
+                similar to the
+                target task and log pairs
+                \( (u_k, x_{k+1}) \) to form the dataset \( \mathcal{D}=\{(u_k,x_{k+1})\}_{k=0}^{N-1} \).
+              </li>
+
+              <li>
+                <strong>Estimate actual input and lumped uncertainty (Jacobian-based).</strong>
+                For each sample \(k\), initialize \(u_{\mathrm{act},k}^{(0)} = u_k\) and iterate:
+                <div class="list-middle-wrap content-tight">
+                  <ol class="list-middle">
+                    <li>\(\hat{x}_{k+1}^{(i)} = f(x_k,\;u_{\mathrm{act},k}^{(i)})\)</li>
+                    <li>\(\Delta x_k^{(i)} = x_{k+1} - \hat{x}_{k+1}^{(i)}\)</li>
+                    <li>\(\delta u^{(i)} = J\!\big(x_k,u_{\mathrm{act},k}^{(i)}\big)^{\dagger}\,\Delta x_k^{(i)}\)</li>
+                    <li>\(u_{\mathrm{act},k}^{(i+1)} = u_{\mathrm{act},k}^{(i)} + \alpha\,\delta u^{(i)},\ (0<\alpha\le
+                        1)\)</li>
+                  </ol>
+                </div>
+                where \(J=\partial f/\partial u\) and \(^{\dagger}\) denotes the pseudo-inverse. After
+                convergence, compute the lumped input-channel uncertainty
+                \( \hat{w}_k = u_k - \hat{u}_{\mathrm{act},k} \), and build
+                \( \mathcal{D}_w=\{(u_k,\hat{w}_k)\}_{k=0}^{N-1} \).
+              </li>
+
+              <li>
+                <strong>Train Gaussian Processes per input channel.</strong>
+                Fit \(n_u\) independent GPs (RBF kernel) on \( \mathcal{D}_w \) to learn \( u \mapsto w \).
+                Hyperparameters (e.g., \( \sigma_f, \ell \)) are optimized via negative log marginal likelihood
+                minimization.
+                The trained models return, for any input \(u\),
+                a <em>mean</em> \( f_{\mu}(u) \) and <em>variance</em> \( f_{\sigma^2}(u) \) of the uncertainty:
+                \( f_{\mathcal{GP}}(u) \sim \mathcal{N}\!\big(f_{\mu}(u),\,f_{\sigma^2}(u)\big) \).
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered mb-6">
+        <div class="column is-four-fifths">
+          <h3 class="title is-4">Online</h3>
+          <div class="content has-text-centered">
+            The block diagram below shows a simplified overview of the proposed online algorithm; full details are
+            provided in the paper.<br>
+            <figure class="image">
+              <img src="./static/images/gpramppi_online.png"
+                alt="Framework diagram of GP-RAMPPI showing integration of Gaussian Process model into the RA-MPPI controller."
+                loading="lazy">
+              <figcaption class="has-text-centered mt-2" style="font-style: normal;">
+                FIGURE 2: Simplified overview of the proposed online algorithm.
+              </figcaption>
+            </figure>
           </div>
 
         </div>
       </div>
 
-      <div class="columns is-centered has-text-centered mb-6 ">
+
+      <!-- Paper video. -->
+      <div class="columns is-centered has-text-centered mt-6">
         <div class="column is-four-fifths">
-          <p>
-            Model, parameters, and result's table can be seen in the paper.
-          </p>
+          <h2 class="title is-3">Application to Mobile Robot</h2>
+          <h3 class="title is-4">F1TENTH</h3>
+        </div>
+      </div>
+
+
+      <!-- Paper video. -->
+      <div class="columns is-centered has-text-centered mb-6">
+        <div class="column is-four-fifths">
+          <h4 class="title is-5">Model</h4>
+          <div class="content list-middle-wrap content-tight">
+            <ul class="list-middle">
+              <li>
+                The robot is modeled as a bicycle model with state
+                \( x = (p_x, p_y, \theta) \) (position and heading).
+              </li>
+              <li>
+                The control inputs are \( u = (v, \delta) \), where
+                \(v\) is the velocity and \(\delta\) is the steering angle.
+              </li>
+              <li>
+                With sampling time \(T_s\), the discrete-time kinematics are:
+                $$\begin{aligned}
+                p_{x,k+1} &= p_{x,k} + T_s\, v_k \cos(\theta_k),\\
+                p_{y,k+1} &= p_{y,k} + T_s\, v_k \sin(\theta_k),\\
+                \theta_{k+1} &= \theta_k + T_s\,\frac{v_k}{L}\,\tan(\delta_k),
+                \end{aligned}$$
+                where \(L\) is the wheelbase of the vehicle (constant for the F1TENTH car).
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paper video. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h3 class="title is-4">Gazebo Simulation Evaluation</h3>
+          <h4 class="title is-5">Parameters</h4>
+          <div class="content list-middle-wrap content-tight">
+            <ul class="list-middle">
+              <li><strong>Sampling rate:</strong> 50.0 Hz (T<sub>s</sub> = 0.02 s)</li>
+              <li><strong>Time horizon:</strong> 1.5 s (Prediction horizon K = 75 steps)</li>
+              <li><strong>Number of trajectories:</strong> M = 256</li>
+              <li><strong>Exploration variance:</strong> γ = 1200.0</li>
+              <li><strong>Control covariance:</strong> Σ<sub>v</sub> = diag(0.3², 0.4²)</li>
+              <li><strong>Inverse temperature:</strong> λ = 0.01</li>
+              <li><strong>State weights:</strong> W = diag(1, 1, 0)</li>
+              <li><strong>Control weights:</strong> R = λ Σ<sub>v</sub><sup>−1/2</sup></li>
+              <li><strong>Collision cost:</strong> C<sub>col</sub> = 10⁷</li>
+              <li><strong>Max velocity:</strong> 3 m/s</li>
+              <li><strong>Max steer:</strong> 1 rad</li>
+              <li><strong>RA-MPPI number of aware trajectories:</strong> N = 16</li>
+              <li><strong>RA-MPPI weight parameters:</strong> A = 0.1, B = 0.9</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paper video. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <div class="publication-video">
+            <iframe src="https://www.youtube.com/embed/wznnwawFi6k?rel=0&amp;showinfo=0" frameborder="0"
+              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered mb-6">
+        <div class="column is-four-fifths">
+          F1TENTH Gazebo simulation evaluation result's table and analysis can be seen in the paper.
         </div>
       </div>
 
       <!-- Paper video. -->
       <div class="columns is-centered has-text-centered mt-6">
         <div class="column is-four-fifths">
-          <h3 class="title is-3">F1TENTH Real-World Evaluation</h3>
+          <h3 class="title is-4">Real-World Evaluation</h3>
+          <h4 class="title is-5">Parameters</h4>
+          <div class="content list-middle-wrap content-tight">
+            <ul class="list-middle">
+              <li>
+                All components of the control stack—cost function, Jacobian-based uncertainty estimation, Gaussian
+                process (GP)
+                training, evaluation metrics, and controller parameters—remain similar to those used in simulation.
+              </li>
+              <li>
+                Only the controller's <strong>sampling rate</strong> is adjusted to 20.0 Hz
+                (T<sub>s</sub> = 0.05 s), and the <strong>control covariance</strong> is set to
+                Σ<sub>v</sub> = diag(0.3², 0.3²),
+                to accommodate differences in the hardware platform and slight variations in vehicle dynamics.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paper video. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
           <div class="publication-video">
             <iframe src="https://www.youtube.com/embed/S-0TqapzAsU?rel=0&amp;showinfo=0" frameborder="0"
               allow="autoplay; encrypted-media" allowfullscreen></iframe>
@@ -201,30 +348,20 @@
         </div>
       </div>
 
-      <div class="columns is-centered has-text-centered mb-6 ">
+      <div class="columns is-centered has-text-centered mb-6">
         <div class="column is-four-fifths">
-          <p>
-            Model, parameters, and result's table can be seen in the paper.
-          </p>
+          F1TENTH real-world evaluation result's table and analysis can be seen in the paper.
         </div>
       </div>
+
       <!--/ Paper video. -->
+
 
       <!-- Paper video. -->
-      <div class="columns is-centered has-text-centered mt-6">
+      <div class="columns is-centered has-text-centered mt-6 mb-6">
         <div class="column is-four-fifths">
-          <h2 class="title is-3">Clearpath Jackal Gazebo Simulation Evaluation</h2>
-          <div class="publication-video">
-            <iframe src="https://www.youtube.com/embed/VFMfThjjeKU?rel=0&amp;showinfo=0" frameborder="0"
-              allow="autoplay; encrypted-media" allowfullscreen></iframe>
-          </div>
-        </div>
-      </div>
-      <!--/ Paper video. -->
-
-      <div class="columns is-centered has-text-centered">
-        <div class="column is-four-fifths">
-          <h3 class="title is-4 title-tight">Model</h3>
+          <h3 class="title is-4">Clearpath Jackal</h3>
+          <h4 class="title is-5">Model</h4>
           <div class="content list-middle-wrap content-tight">
             <ul class="list-middle">
               <li>
@@ -248,38 +385,38 @@
         </div>
       </div>
 
+
       <!-- Paper video. -->
       <div class="columns is-centered has-text-centered">
         <div class="column is-four-fifths">
-          <h3 class="title is-4 title-tight">Parameters</h3>
-          <div class="content list-middle-wrap content-tight">
-            <ul class="list-middle">
-              <li><strong>Sampling rate:</strong> 50.0 Hz (T<sub>s</sub> = 0.02 s)</li>
-              <li><strong>Time horizon:</strong> 3 s (Prediction horizon K = 150 steps)</li>
-              <li><strong>Number of trajectories:</strong> M = 256</li>
-              <li><strong>Exploration variance:</strong> γ = 1200.0</li>
-              <li><strong>Control covariance:</strong> Σ<sub>v</sub> = diag(0.5², 1.0²)</li>
-              <li><strong>Inverse temperature:</strong> λ = 0.01</li>
-              <li><strong>State weights:</strong> W = diag(1, 1, 0)</li>
-              <li><strong>Control weights:</strong> R = λ Σ<sub>v</sub><sup>−1/2</sup></li>
-              <li><strong>Collision cost:</strong> C<sub>col</sub> = 10⁷</li>
-              <li><strong>Max velocity:</strong> 3.5 m/s</li>
-              <li><strong>Max angular velocity:</strong> 1.5 rad/s</li>
-              <li><strong>RA-MPPI number of aware trajectories:</strong> N = 16</li>
-              <li><strong>RA-MPPI weight parameters:</strong> A = 0.1, B = 0.9</li>
-            </ul>
-
-          </div>
+          <h3 class="title is-4">Gazebo Simulation</h3>
         </div>
       </div>
 
+
+
+      <!-- Paper video. -->
       <div class="columns is-centered has-text-centered">
         <div class="column is-four-fifths">
-          <h3 class="title is-4 title-tight">Result</h3>
+          <div class="publication-video">
+            <iframe src="https://www.youtube.com/embed/VFMfThjjeKU?rel=0&amp;showinfo=0" frameborder="0"
+              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+      <!--/ Paper video. -->
+
+
+
+
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h4 class="title is-5">Result</h4>
           <div class="content has-text-justified content-tight">
             <figure class="image">
               <figcaption class="has-text-centered" style="font-style: normal;">
-                TABLE 1: Number of Laps Completed in Each Trial and Total Laps per Method. Each sub-table corresponds to
+                TABLE 1: Number of Laps Completed in Each Trial and Total Laps per Method. Each sub-table corresponds
+                to
                 one of the two scenarios:
                 (a) Jackal without obstacles,
                 (b) Jackal with obstacles.
@@ -296,6 +433,28 @@
               </figcaption>
               <img src="./static/images/jackal result 2.png" loading="lazy">
             </figure>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h4 class="title is-5">Analysis</h4>
+          <div class="content list-middle-wrap content-tight">
+            <ul class="list-middle">
+              <li>
+                MPPI that use the <strong>GP mean</strong> tend to increase the number of completed laps
+                (especially <em>Case 5</em>) compared to the baseline MPPI methods (<em>Cases 6 and 7</em>).
+              </li>
+              <li>
+                By leveraging both the <strong>GP mean and variance</strong> (the proposed method, <em>Case 1</em>),
+                the system achieves the highest number of completed laps while maintaining competitive speed.
+              </li>
+              <li>
+                The <strong>proposed method</strong> demonstrates computation times comparable to those of
+                MPPI with \(M \times N\) trajectories and RA-MPPI (<em>Cases 2, 3, 4, and 6</em>).
+              </li>
+            </ul>
           </div>
         </div>
       </div>

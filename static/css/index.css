@@ -193,6 +193,10 @@ body {
   margin-top: 0.25rem !important;
 }
 
+.list-middle-wrap {
+  margin-top: 0 !important;
+}
+
 .MathJax_Display {
   margin: 0 !important;
   /* remove top & bottom margins */
