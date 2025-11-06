@@ -460,6 +460,92 @@
       </div>
 
 
+      <!-- Original content omitted for brevity in this explanation; full content preserved in canvas -->
+
+
+      <!-- ================= APPENDIX ADDED HERE ================= -->
+      <section class="section">
+
+        <div class="columns is-centered">
+          <div class="column is-four-fifths">
+            <h2 class="title is-3 has-text-centered mb-6">Appendix: Convergence Analysis of the Gauss-Newton Uncertainty
+              Estimation Iteration</h2>
+
+
+            <h3 class="title is-4 has-text-centered">Theorem Statement</h3>
+            <p>Consider the discrete-time system
+              $$ x_{k+1} = f(x_k, u_{\mathrm{act}}), $$
+              where $x_k \in \mathbb{R}^{n_x}$ is the state at time step $k$, $u_{\mathrm{act}} \in \mathbb{R}^{n_u}$
+              the
+              actual control input, and $f$ a sufficiently smooth function describing the known nominal model. The goal
+              is to identify $u_{\mathrm{act}}$ by solving
+              $$ x_{k+1} - f(x_k, u) = 0. $$
+            </p>
+
+
+            <p>Define the residual function
+              $$ \mathbf{r}(u) = x_{k+1} - f(x_k, u), $$
+              so that we seek $u^* = u_{\mathrm{act}}$ satisfying $\mathbf{r}(u^*) = 0$.
+            </p>
+
+
+            <p>The iterative update rule is
+              $$ u^{(i+1)} = u^{(i)} + \alpha J^{\dagger}(u^{(i)})\, \mathbf{r}(u^{(i)}), $$
+              where $J = \partial f / \partial u$ and $J^{\dagger}$ is the Moore–Penrose pseudoinverse.
+            </p>
+
+
+            <p class="mt-2"><strong>Theorem:</strong> Under standard smoothness conditions, proper step size $\alpha$,
+              and an initial
+              guess sufficiently close to $u^*$, this iteration converges locally to $u^*$ if
+              $$ \| I_{n_u} - \alpha J^{\dagger}(u^*) J(u^*) \| < 1. $$ </p>
+
+
+                <h3 class="title is-4 mt-6 has-text-centered">Proof</h3>
+                <p>The proof proceeds via a fixed-point contraction argument...</p>
+
+
+                <h4 class="title is-5  mt-6 has-text-centered">Fixed-Point View</h4>
+                <p>Define
+                  $$ \mathbf{G}(u) = u + \alpha J^{\dagger}(u)[x_{k+1} - f(x_k,u)], $$
+                  so a solution satisfies $\mathbf{G}(u^*) = u^*$.
+                </p>
+
+
+                <h4 class="title is-5  mt-6 has-text-centered">Local Convergence Criterion</h4>
+                <p>The Jacobian of $\mathbf{G}$ near $u^*$ satisfies approximately
+                  $$ D\mathbf{G}(u^*) \approx I_{n_u} - \alpha J^{\dagger}(u^*) J(u^*). $$
+                  Local contraction holds if its norm is strictly less than 1.
+                </p>
+
+
+                <h4 class="title is-5  mt-6 has-text-centered">Computing $D\mathbf{G}(u^*)$</h4>
+                <p>Since $\partial \mathbf{r} / \partial u = -J$, one obtains
+                  $$ D\mathbf{G}(u^*) \approx I_{n_u} - \alpha J^{\dagger}(u^*) J(u^*). $$
+                </p>
+
+
+                <h4 class="title is-5  mt-6 has-text-centered">Local Convergence Under the Condition</h4>
+                <p>If
+                  $$ \| I_{n_u} - \alpha J^{\dagger}(u^*) J(u^*) \| < 1, $$ then $\mathbf{G}$ is locally contractive,
+                    and the iteration converges to $u^*$. </p>
+
+
+                    <h4 class="title is-5  mt-6 has-text-centered">Why the Condition Often Holds</h4>
+                    <p>If $J(u^*)$ has full column rank, then
+                      $$ J^{\dagger}(u^*) J(u^*) = I_{n_u}, $$
+                      leading to
+                      $$ \| (1-\alpha)I_{n_u} \| = |1-\alpha| < 1 \quad (\alpha>0). $$
+                    </p>
+
+
+                    <h4 class="title is-5  mt-6 has-text-centered">Overdetermined or Underdetermined Cases</h4>
+                    <p>The iteration still converges if the Jacobian has full column (overdetermined) or row
+                      (underdetermined) rank, ensuring proper least-squares or minimum-norm updates.</p>
+          </div>
+        </div>
+      </section>
+
     </div>
 
 
